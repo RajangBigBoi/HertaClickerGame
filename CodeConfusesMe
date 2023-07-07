@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Herta Spinner</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial, sans-serif;
+      overflow: hidden;
+    }
+    
+    #score {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    #clickButton {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin-bottom: 20px;
+    }
+    
+    #powerUps {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .powerUp {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .powerUp img {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 10px;
+    }
+    
+    .powerUp button {
+      font-size: 14px;
+      padding: 5px 10px;
+    }
+    
+    .powerUp p {
+      margin-bottom: 5px;
+    }
+    
+    #gifContainer {
+      position: absolute;
+      top: 50vh;
+      left: 0;
+      width: 0;
+      z-index: 9999;
+      pointer-events: none;
+      ;
+    }
+    
+    #gifContainer img {
+      position: absolute;
+      animation: runAcrossScreen 1s linear;
+    }
+    
+    @keyframes runAcrossScreen {
+      0% {
+        transform: translateX(0);
+      }
+      
+      100% {
+        transform: translateX(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Herta Spinner</h1>
+  
+  <p id="score">Score: 0</p>
+  
+  <button id="clickButton">Click Me to Spin!</button>
+  
+  <div id="powerUps">
+    <div class="powerUp">
+      <img src="powerup1.png" alt="Power-up 1">
+      <p>Power-up 1</p>
+      <p>Level: <span id="powerUp1Level">0</span></p>
+      <p>Price: <span id="powerUp1Price">10</span> clicks</p>
+      <button id="powerUp1Button">Upgrade</button>
+    </div>
+    
+    <div class="powerUp">
+      <img src="powerup2.png" alt="Power-up 2">
+      <p>Power-up 2</p>
+      <p>Level: <span id="powerUp2Level">0</span></p>
+      <p>Price: <span id="powerUp2Price">20</span> clicks</p>
+      <button id="powerUp2Button">Upgrade</button>
+    </div>
+    
+    <div class="powerUp">
+      <img src="autoclicker.png" alt="Autoclicker">
+      <p>Autoclicker</p>
+      <p>Level: <span id="autoClickerLevel">0</span></p>
+      <p>Interval: <span id="autoClickerInterval">1000</span> ms</p>
+      <p>Price: <span id="autoClickerPrice">50</span> clicks</p>
+      <button id="autoClickerButton">Upgrade</button>
+    </div>
+  </div>
+  
+  <div id="gifContainer"></div>
+
+  <script>
+    // Initial score
+    let score = 0;
+    
+    // Power-up levels
+    let powerUp1Level = 0;
+    let powerUp2Level = 0;
+    let autoClickerLevel = 0;
+    
+    // Power-up prices
+    let powerUp1Price = 10;
+    let powerUp2Price = 20;
+    let autoClickerPrice = 50;
+    
+    // Autoclicker interval
+    let autoClickerInterval = 1000;
+    
+    // Get the necessary elements
+    const scoreElement = document.getElementById('score');
+    const clickButton = document.getElementById('clickButton');
+    const powerUp1Button = document.getElementById('powerUp1Button');
+    const powerUp2Button = document.getElementById('powerUp2Button');
+    const autoClickerButton = document.getElementById('autoClickerButton');
+    const powerUp1LevelElement = document.getElementById('powerUp1Level');
+    const powerUp2LevelElement = document.getElementById('powerUp2Level');
+    const autoClickerLevelElement = document.getElementById('autoClickerLevel');
+    const powerUp1PriceElement = document.getElementById('powerUp1Price');
+    const powerUp2PriceElement = document.getElementById('powerUp2Price');
+    const autoClickerPriceElement = document.getElementById('autoClickerPrice');
+    const autoClickerIntervalElement = document.getElementById('autoClickerInterval');
+    const gifContainer = document.getElementById('gifContainer');
+    
+    // Sound files
+    const clickSound1 = new Audio('Kurukuru.mp3');
+    const clickSound2 = new Audio('Kururin.mp3');
+    
+    // Counter for alternating click sounds
+    let clickSoundCounter = 0;
+    
+    // Increase the score when the button is clicked
+    clickButton.addEventListener('click', function() {
+      // Apply power-up multipliers
+      score += 1 + powerUp1Level + powerUp2Level;
+      scoreElement.textContent = 'Score: ' + score;
+      
+      // Trigger GIF animation
+      if (clickButton === true) {
+        const gifImage = document.createElement('img');
+        gifImage.src = 'herta.gif';
+        gifContainer.appendChild(gifImage);
+        setTimeout(function() {
+          gifContainer.removeChild(gifImage);
+        }, 3000);
+      }
+      
+      // Play click sound
+      if (clickSoundCounter % 2 === 0) {
+        clickSound1.play();
+      } else {
+        clickSound2.play();
+      }
+      clickSoundCounter++;
+    });
+    
+    // Upgrade power-up 1
+    powerUp1Button.addEventListener('click', function() {
+      if (score >= powerUp1Price) {
+        score -= powerUp1Price;
+        powerUp1Level++;
+        powerUp1LevelElement.textContent = powerUp1Level;
+        powerUp1Price += 10;
+        powerUp1PriceElement.textContent = powerUp1Price;
+        scoreElement.textContent = 'Score: ' + score;
+      }
+    });
+    
+    // Upgrade power-up 2
+    powerUp2Button.addEventListener('click', function() {
+      if (score >= powerUp2Price) {
+        score -= powerUp2Price;
+        powerUp2Level++;
+        powerUp2LevelElement.textContent = powerUp2Level;
+        powerUp2Price += 20;
+        powerUp2PriceElement.textContent = powerUp2Price;
+        scoreElement.textContent = 'Score: ' + score;
+        autoClickerInterval -= 500;
+        autoClickerIntervalElement.textContent = autoClickerInterval;
+      }
+    });
+    
+    // Upgrade autoclicker
+    autoClickerButton.addEventListener('click', function() {
+      if (score >= autoClickerPrice) {
+        score -= autoClickerPrice;
+        autoClickerLevel++;
+        autoClickerLevelElement.textContent = autoClickerLevel;
+        autoClickerPrice += 50;
+        autoClickerPriceElement.textContent = autoClickerPrice;
+        scoreElement.textContent = 'Score: ' + score;
+        autoClickerInterval -= 100;
+        autoClickerInterval = Math.max(autoClickerInterval, 100);
+        autoClickerIntervalElement.textContent = autoClickerInterval;
+        autoclick();
+      }
+    });
+    
+    // Autoclicker function
+    function autoclick() {
+      setInterval(function() {
+        score += autoClickerLevel;
+        scoreElement.textContent = 'Score: ' + score;
+      }, autoClickerInterval);
+    }
+
+    // Play sound concurrently without delay
+    function playSound(sound) {
+      const audioClone = sound.cloneNode(true);
+      audioClone.currentTime = 0;
+      audioClone.play();
+    }
+  </script>
+</body>
+</html>

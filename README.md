@@ -5,4 +5,4 @@ Instructions:
 Click to spin Herta
 Upgrade is available for 15 clicks and increases 15% every time you click it.
 
-Warning: it's cursed.
+Warning: it's cursed and it's still in development
